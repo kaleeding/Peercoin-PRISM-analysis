@@ -20,7 +20,7 @@ const minAge = 3;
 const int maxAge = 9;
 const int ageLimit = 36;
 
-formula age_update = mod(step,3*g-#2)=0? 1 : 0;
+formula age_update = mod(step,3*g-2)=0? 1 : 0;
 
 // Agents probability of being elected to produce a block
 formula p = r1/g * min(age1+age_update,maxAge)/(maxAge);
