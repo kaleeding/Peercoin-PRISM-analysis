@@ -2,7 +2,7 @@
 dtmc
 
 // Stake ratio distribution
-const double r1;
+const double r1; // Set 0 < r1 < 1
 const double r2 = 1-r1;
 
 // How agent 2 will split their stake between the new accounts
