@@ -24,16 +24,20 @@ formula p = r1/g * min(age1+age_update,maxAge)/(maxAge);
 formula eligible = (age1+age_update>=minAge)? true : false;
 
 // Highest coinage from agents with solutions found
-formula maxCoinage = max(r1*age1*solution1,r2*age2*solution2,r3*age3*solution3);
+formula maxCoinage = max(r1*age1*selected1,
+			 r2*age2*selected2,
+    			 r3*age3*selected3);
 
 // Total number of solutions found during a step
-formula solutions = solution1+solution2+solution3;
+formula selected_agents = selected1+selected2+selected3;
 
 // Total number of agents chosen as block proposer
 formula winners = winner1+winner2+winner3;
 
 // Total number of eligible stakers
-formula eligible_stakers = (age1+1>=minAge? 1:0)+(age2+1>=minAge? 1:0)+(age3+1>=minAge? 1:0);
+formula eligible_stakers = (age1+1>=minAge? 1:0)
+			   +(age2+1>=minAge? 1:0)
+      			   +(age3+1>=minAge? 1:0);
 
 module stepper
 
@@ -53,19 +57,21 @@ module agent1
 
 	// Agents local variables
 	age1 : [0..ageLimit] init minAge-1;
-	solution1 : [0..1] init 0;
+	selected1 : [0..1] init 0;
 	winner1 : [0..1] init 0;
 
 	// Solution search
-	[election] eligible -> p:(solution1'=1)&(age1'=min(age1+age_update,ageLimit)) 
+	[election] eligible -> p:(selected1'=1)
+ 					&(age1'=min(age1+age_update,ageLimit)) 
 			   + 1-p:(age1'=min(age1+age_update,ageLimit));
 	[election] !eligible -> (age1'=age1+age_update);
 
 	// Highest coinage selection rule
-	[consensus1] solution1=1&(r1*age1)=maxCoinage -> (solution1'=0)&(winner1'=1);
-	[consensus2] solution2=1&(r2*age2)=maxCoinage -> (solution1'=0);
-	[consensus3] solution3=1&(r3*age3)=maxCoinage -> (solution1'=0);
-	[consensus0] solutions=0 -> (solution1'=0);
+	[consensus1] selected1=1&(r1*age1)=maxCoinage -> (selected1'=0)
+ 							&(winner1'=1);
+	[consensus2] selected2=1&(r2*age2)=maxCoinage -> (selected1'=0);
+	[consensus3] selected3=1&(r3*age3)=maxCoinage -> (selected1'=0);
+	[consensus0] solutions=0 -> (selected1'=0);
 
 	// Reset to prepare for next sub-slot
 	[reset] winner1=1 -> (winner1'=0)&(age1'=0);
@@ -77,11 +83,11 @@ endmodule
 // Module process for agent 2
 module agent2=agent1 [
 age1=age2,
-solution1=solution2,
+selected1=selected2,
 winner1=winner2,
 r1=r2,
 age2=age1,
-solution2=solution1,
+selected2=selected1,
 winner2=winner1,
 r2=r1,
 consensus1=consensus2,
@@ -90,11 +96,11 @@ consensus2=consensus1
 // Module process for agent 3
 module agent3=agent1 [
 age1=age3,
-solution1=solution3,
+selected1=selected3,
 winner1=winner3,
 r1=r3,
 age3=age1,
-solution3=solution1,
+selected3=selected1,
 winner3=winner1,
 r3=r1,
 consensus1=consensus3,
@@ -102,10 +108,10 @@ consensus3=consensus1
 ] endmodule
 
 // Labels describing
-// a state that has solutions
-label "solutions" = solutions>0;
+// a state that has agents selected to propose
+label "agents_selected" = selected_agents>0;
 // a state that has conflicts
-label "conflict" = solutions>1;
+label "conflict" = selected_agents>1;
 // a state that has winners
 label "winners" = winners>0;
 // a state that has multiple winners
@@ -152,13 +158,13 @@ endrewards
 // Reward value of 1 applied to any state
 // in which agent 3 found a solution
 rewards "agent_elected"
-	solution3 = 1 : 1; 
+	selected3 = 1 : 1; 
 endrewards
 
 // Reward value of [1..n] applied to any state
 // in which has agents which found solutions
 rewards "total_elected"
-	solutions > 0 : solutions; 
+	selected_agents > 0 : selected_agents; 
 endrewards
 
 // Reward value of 1 applied to any state
