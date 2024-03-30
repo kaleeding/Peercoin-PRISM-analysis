@@ -4,7 +4,7 @@ const int T = 100;
 
 // Probability that agent 1 is elected
 // during the first election
-P=? [ X solution1=1 ]
+P=? [ X selected1=1 ]
 
 // Probability that agent 1 has a block finalised
 // during the first possible moment
