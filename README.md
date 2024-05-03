@@ -15,6 +15,3 @@ These are analysed against a set of properties described in `/PRISM/property.pro
 - Verify or experiment with properties
 
 For more information on using the PRISM tool please refer to the [PRISM manual](https://www.prismmodelchecker.org/manual/RunningPRISM/StartingPRISM).
-
-# Documents
-The paper describing this analysis in detail can be found in `/docs`.
