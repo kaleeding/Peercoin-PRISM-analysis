@@ -71,7 +71,7 @@ module agent1
  							&(winner1'=1);
 	[consensus2] selected2=1&(r2*age2)=maxCoinage -> (selected1'=0);
 	[consensus3] selected3=1&(r3*age3)=maxCoinage -> (selected1'=0);
-	[consensus0] solutions=0 -> (selected1'=0);
+	[consensus0] selected_agents=0 -> (selected1'=0);
 
 	// Reset to prepare for next sub-slot
 	[reset] winner1=1 -> (winner1'=0)&(age1'=0);
@@ -133,7 +133,7 @@ endrewards
 // that has multiple solutions found
 // ( multiple agents elected)
 rewards "conflicts"
-	solutions > 1 : 1; 
+	selected_agents > 1 : 1; 
 endrewards
 
 // Reward value equal to the number of current
